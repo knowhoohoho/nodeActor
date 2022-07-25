@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="messages" type="none">
+        <li id="usercount"></li>
+    </ul>
+
+    <form id="msgform">
+        <input id="msginput" autocomplete="off" type="text">
+        <button type="submit">전송</button>
+    </form>
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var msgform = document.getElementById('msgform')
+
+        socket.on('usercount', (count) => {
+            var userCounter = document.getElementById('usercount')
+                userCounter.innerText = "현재"+ count+ "명이 접속해 있습니다";
+        })
+
+        socket.on('message',  (msg) => {
+            var messageList = document.getElementById('messages')
+            var messageTag = document.createElement('li')
+            messageTag.innerText = msg;
+            messageList.appendChild(messageTag)
+        })
+
+        msgform.onsubmit= (e) => {
+            e.preventDefault();
+            var msginput = document.getElementById('msginput');
+
+            socket.emit('message', msginput.value);
+
+            msginput.value = "";
+
+        }
+    </script>
+</body>
+</html>
